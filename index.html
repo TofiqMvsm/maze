@@ -100,6 +100,8 @@
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            min-height: 48px; /* Better touch target for mobile */
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
         
         .btn-generate {
@@ -152,6 +154,8 @@
             border: 2px solid #e9ecef;
             border-radius: 8px;
             cursor: crosshair;
+            max-width: 100%;
+            height: auto;
         }
         
         .stats {
@@ -217,9 +221,113 @@
             line-height: 1.6;
         }
         
+        /* Tablet and smaller screens */
         @media (max-width: 1024px) {
             .content {
                 grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                margin-top: 20px;
+            }
+        }
+        
+        /* Mobile phones */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 0.9em;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .controls {
+                padding: 15px;
+                gap: 15px;
+                grid-template-columns: 1fr;
+            }
+            
+            .control-group {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            canvas {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 100%;
+            }
+            
+            .stats {
+                order: -1; /* Show stats above canvas on mobile */
+            }
+            
+            .stat-item {
+                font-size: 14px;
+            }
+            
+            .info-box {
+                font-size: 13px;
+            }
+        }
+        
+        /* Small mobile phones */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .header p {
+                font-size: 0.85em;
+            }
+            
+            .control-group label {
+                font-size: 14px;
+            }
+            
+            button {
+                padding: 10px;
+                font-size: 13px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-random {
+                margin-top: 5px !important;
+            }
+            
+            .legend-item {
+                font-size: 13px;
+            }
+        }
+        
+        /* Landscape mode for phones */
+        @media (max-width: 900px) and (orientation: landscape) {
+            .content {
+                grid-template-columns: 1.5fr 1fr;
+            }
+            
+            body {
+                padding: 10px;
             }
         }
     </style>
@@ -358,6 +466,23 @@
         
         const canvas = document.getElementById('mazeCanvas');
         const ctx = canvas.getContext('2d');
+        
+        // Make canvas responsive
+        function resizeCanvas() {
+            const container = document.querySelector('.canvas-container');
+            const maxSize = Math.min(container.clientWidth - 40, 700);
+            canvas.width = maxSize;
+            canvas.height = maxSize;
+            
+            // Redraw maze if exists
+            if (currentMaze) {
+                drawMaze(currentMaze, currentPath, exploredCells);
+            }
+        }
+        
+        // Resize on load and window resize
+        window.addEventListener('load', resizeCanvas);
+        window.addEventListener('resize', resizeCanvas);
         
         // Update size display
         document.getElementById('sizeSlider').addEventListener('input', (e) => {
